@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  customer-service:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgres://postgres:postgres@customer-db:5432/customer_db
+    depends_on:
+      - customer-db
+    volumes:
+      - .:/app
+    networks:
+      - microservice-network
+
+  customer-db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=customer_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - customer-db-data:/var/lib/postgresql/data
+    networks:
+      - microservice-network
+
+volumes:
+  customer-db-data:
+
+networks:
+  microservice-network:
+    external: true
